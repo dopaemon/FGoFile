@@ -1,0 +1,12 @@
+Source: fgofile
+Section: utils
+Priority: optional
+Maintainer: dopaemon <polarisdp@gmail.com>
+Build-Depends: debhelper-compat (= 13), dh-golang, golang-any
+Standards-Version: 4.6.2
+Homepage: https://github.com/dopaemon/FGoFile.git
+
+Package: fgofile
+Architecture: amd64
+Depends: libgl1, libx11-6, libglfw3
+Description: FTP Minimal Data Storage

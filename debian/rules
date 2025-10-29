@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+BIN_NAME := fgofile
+PATH := /usr/local/go/bin:$(PATH)
+DH_GOPKG := github.com/dopaemon/FGoFile
+override_dh_golang:
+
+%:
+	dh $@ --with=golang
+
+override_dh_clean:
+	dh_clean
+
+override_dh_auto_build:
+	GO111MODULE=on CGO_ENABLED=1 go build -mod=vendor -ldflags "-s -w" -v -o $(BIN_NAME) main.go
+
+override_dh_auto_install:
+	mkdir -p debian/$(BIN_NAME)/usr/bin
+	cp $(BIN_NAME) debian/$(BIN_NAME)/usr/bin/
