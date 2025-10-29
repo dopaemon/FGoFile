@@ -17,11 +17,10 @@ func main() {
     srvUser := flag.String("suser", "", "server auth username (optional)")
     srvPass := flag.String("spass", "", "server auth password (optional)")
 
-    cliUser := flag.String("u", "", "client username (alias of --username)")
-    cliPass := flag.String("P", "", "client password (alias of --password)")
-
-    flag.StringVar(cliUser, "username", "", "client username")
-    flag.StringVar(cliPass, "password", "", "client password")
+    cliUser := flag.String("cuser", "", "client username (or use -u)")
+    cliPass := flag.String("cpass", "", "client password (or use -P)")
+    flag.StringVar(cliUser, "u", *cliUser, "client username (alias)")
+    flag.StringVar(cliPass, "P", *cliPass, "client password (alias)")
 
     flag.Parse()
 
@@ -35,7 +34,7 @@ func main() {
     }
 
     if flag.NArg() < 1 {
-        fmt.Println("Usage:\n  fgo --server [--port 2121] [--root ./ftp_root] [--username u --password p]\n  fgo <host> [--port 2121] [--username u --password p]")
+        fmt.Println("Usage:\n  fgofile --server [--port 2121] [--root ./ftp_root] [--suser u --spass p]\n  fgofile <host> [--port 2121] [--cuser u --cpass p | -u u -P p]")
         os.Exit(2)
     }
     host := flag.Arg(0)
