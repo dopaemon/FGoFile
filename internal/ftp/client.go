@@ -92,6 +92,16 @@ func (c *Client) REPL() {
             if arg == "" { fmt.Println("usage: rm <remote>"); continue }
             resp := strings.TrimSpace(c.send("DELE "+arg))
             fmt.Println(resp)
+        case "mv":
+            if len(parts) < 3 { fmt.Println("usage: mv <old> <new>"); continue }
+            src := parts[1]
+            dst := parts[2]
+            resp := strings.TrimSpace(c.send("RNFR "+src))
+            fmt.Println(resp)
+            if strings.HasPrefix(resp, "350") {
+                resp2 := strings.TrimSpace(c.send("RNTO "+dst))
+                fmt.Println(resp2)
+            }
         case "get":
             if arg == "" { fmt.Println("usage: get <remote>"); continue }
             dc, _, err := c.pasvDial(); if err != nil { fmt.Println(err); continue }
