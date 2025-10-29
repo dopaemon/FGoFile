@@ -1,4 +1,4 @@
-PACKAGE (VERSION) UNRELEASED; urgency=medium
+fgofile (0.0.1) UNRELEASED; urgency=medium
 
   * Initial release.
 
