@@ -10,25 +10,32 @@ import (
 )
 
 func main() {
-    // Server flags
     isServer := flag.Bool("server", false, "run as server")
     port := flag.Int("port", 2121, "port")
+
     root := flag.String("root", "./ftp_root", "ftp root directory (server)")
+    srvUser := flag.String("suser", "", "server auth username (optional)")
+    srvPass := flag.String("spass", "", "server auth password (optional)")
+
+    cliUser := flag.String("u", "", "client username (alias of --username)")
+    cliPass := flag.String("P", "", "client password (alias of --password)")
+
+    flag.StringVar(cliUser, "username", "", "client username")
+    flag.StringVar(cliPass, "password", "", "client password")
 
     flag.Parse()
 
     if *isServer {
         if err := os.MkdirAll(*root, 0o755); err != nil { log.Fatal(err) }
-        srv, err := ftp.NewServer("0.0.0.0", *port, *root)
+        srv, err := ftp.NewServer("0.0.0.0", *port, *root, *srvUser, *srvPass)
         if err != nil { log.Fatal(err) }
-        fmt.Printf("Server listening on %s\n", srv.Addr())
+        fmt.Printf("Server listening on %s (auth: %v)\n", srv.Addr(), srv.RequireAuth())
         log.Fatal(srv.Serve())
         return
     }
 
-    // Client mode: args: <host> [--port N]
     if flag.NArg() < 1 {
-        fmt.Println("Usage:\n  fgo --server [--port 2121] [--root ./ftp_root]\n  fgo <host> [--port 2121]")
+        fmt.Println("Usage:\n  fgo --server [--port 2121] [--root ./ftp_root] [--username u --password p]\n  fgo <host> [--port 2121] [--username u --password p]")
         os.Exit(2)
     }
     host := flag.Arg(0)
@@ -38,7 +45,8 @@ func main() {
     if err != nil { log.Fatal(err) }
     defer c.Close()
 
-    if err := c.LoginAnonymous(); err != nil { log.Fatal(err) }
+    if err := c.LoginInteractive(*cliUser, *cliPass); err != nil { log.Fatal(err) }
+
     fmt.Printf("Connected to %s\n", addr)
     c.REPL()
 }
