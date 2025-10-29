@@ -6,7 +6,7 @@ import (
     "log"
     "os"
 
-    "fgofile/internal/ftp"
+    "github.com/dopaemon/fgofile/internal/ftp"
 )
 
 func main() {

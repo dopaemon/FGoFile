@@ -1,19 +1,14 @@
 #!/usr/bin/make -f
 
-BIN_NAME := fgofile
-PATH := /usr/local/go/bin:$(PATH)
-DH_GOPKG := github.com/dopaemon/FGoFile
-override_dh_golang:
+export DH_GOPKG=github.com/dopaemon/fgofile
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all optimize=-lto
 
 %:
-	dh $@ --with=golang
+	dh $@ --buildsystem=golang
 
-override_dh_clean:
-	dh_clean
+override_dh_auto_test:
+	@echo "Skipping go tests (no tests yet)"
 
-override_dh_auto_build:
-	GO111MODULE=on CGO_ENABLED=1 go build -mod=vendor -ldflags "-s -w" -v -o $(BIN_NAME) main.go
-
-override_dh_auto_install:
-	mkdir -p debian/$(BIN_NAME)/usr/bin
-	cp $(BIN_NAME) debian/$(BIN_NAME)/usr/bin/
+# NEW: skip dwz for Go binaries
+override_dh_dwz:
+	@echo "Skipping dh_dwz for Go binary"

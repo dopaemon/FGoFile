@@ -3,6 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: dopaemon <polarisdp@gmail.com>
 Build-Depends: debhelper-compat (= 13), dh-golang, golang-any
+XS-Go-Import-Path: github.com/dopaemon/fgofile
 Standards-Version: 4.6.2
 Homepage: https://github.com/dopaemon/FGoFile.git
 
