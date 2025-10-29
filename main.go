@@ -1,1 +1,1 @@
-cmd/fgo/main.go
+cmd/fgofile/main.go
