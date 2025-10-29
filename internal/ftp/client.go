@@ -73,6 +73,14 @@ func (c *Client) REPL() {
             io.Copy(os.Stdout, dc)
             dc.Close()
             fmt.Print(strings.TrimSpace(readLine(c.rw)), "\n") // 226
+        case "cd":
+            if arg == "" { fmt.Println("usage: cd <dir>"); continue }
+            resp := strings.TrimSpace(c.send("CWD "+arg))
+            fmt.Println(resp)
+            if strings.HasPrefix(resp, "250") {
+                pwd := strings.TrimSpace(c.send("PWD"))
+                fmt.Println(pwd)
+            }
         case "get":
             if arg == "" { fmt.Println("usage: get <remote>"); continue }
             dc, _, err := c.pasvDial(); if err != nil { fmt.Println(err); continue }
