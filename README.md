@@ -34,5 +34,8 @@ ftp> get readme.txt
 ftp> quit
 ```
 
+# FTP Command table
+* [**FTP Command**](FTPCommand.md)
+
 # LICENCE
 * [**MIT LICENCE**](LICENCE)
