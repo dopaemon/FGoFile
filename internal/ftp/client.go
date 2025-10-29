@@ -84,6 +84,10 @@ func (c *Client) REPL() {
         case "pwd":
             resp := strings.TrimSpace(c.send("PWD"))
             fmt.Println(resp)
+        case "rm":
+            if arg == "" { fmt.Println("usage: rm <remote>"); continue }
+            resp := strings.TrimSpace(c.send("DELE "+arg))
+            fmt.Println(resp)
         case "get":
             if arg == "" { fmt.Println("usage: get <remote>"); continue }
             dc, _, err := c.pasvDial(); if err != nil { fmt.Println(err); continue }
