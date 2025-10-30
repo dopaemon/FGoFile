@@ -65,6 +65,11 @@ ftp> quit
 ```bash
 docker compose up -d
 ```
+or
+```bash
+docker compose up -d --build
+```
+* File Storage Folder is `data`, edit in [**docker-compose.yml**](docker-compose.yml) file.
 
 # FTP Command table
 * [**FTP Command**](FTPCommand.md)
