@@ -1,0 +1,4 @@
+[submodule "h5ai"]
+	path = h5ai
+	url = https://github.com/dopaemon/Dockerfile.git
+	branch = h5ai

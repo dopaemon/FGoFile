@@ -33,22 +33,17 @@ make build
 ## Get started quickly
 * **Run Server:**
 ```bash
-# Tạo thư mục gốc và file mẫu
 mkdir -p ftp_root && echo Hello > ftp_root/readme.txt
 
-# Chạy server bắt buộc user/password
 ./fgofile --server --port 2121 --root ./ftp_root --suser user --spass pass
 
-# Hoặc server không đặt tài khoản → cho phép anonymous login
 ./fgofile --server --port 2121 --root ./ftp_root
 ```
 
 * **Run Client:**
 ```bash
-# Kết nối tới server (truyền user/pass trực tiếp)
 ./fgofile 127.0.0.1 --port 2121 --cuser user --cpass pass
 
-# Hoặc không truyền → chương trình sẽ hỏi nhập
 ./fgofile 127.0.0.1 --port 2121
 Username (Enter for anonymous): user
 Password: pass
@@ -63,6 +58,12 @@ ftp> cd newfolder
 ftp> put example.txt
 ftp> get readme.txt
 ftp> quit
+```
+
+# Docker Compose
+* **Run Container With Docker Compose + h5ai Web Server:**
+```bash
+docker compose up -d
 ```
 
 # FTP Command table
