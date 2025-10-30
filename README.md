@@ -1,11 +1,5 @@
 # FGoFile
 
-## Get Source Code
-* **Request git clone with submodule command**
-```bash
-git clone -b main --single-branch --recurse-submodules https://github.com/dopaemon/FGoFile.git
-```
-
 ## Install
 * **Request Debian Base Distro**
 * Add Key GPG:
@@ -27,6 +21,10 @@ sudo apt install fgofile -y
 
 ## Build
 * **Request GoLang 1.25**
+* Clone Source:
+```bash
+git clone -b main --single-branch --recurse-submodules https://github.com/dopaemon/FGoFile.git
+```
 * Build binary:
 ```bash
 go build -v
