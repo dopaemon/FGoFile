@@ -25,9 +25,9 @@ services:
     environment:
       - FGO_PORT=2121
       - FGO_ROOT=/h5ai
-      # - FGO_USER=user
-      # - FGO_PASS=pass
-    command: ["/bin/sh", "-lc", "fgofile --server --port ${FGO_PORT:-2121} --root ${FGO_ROOT:-/h5ai} $( [ -n \"$FGO_USER\" -a -n \"$FGO_PASS\" ] && printf -- ' --suser %s --spass %s' \"$FGO_USER\" \"$FGO_PASS\" )"]
+      - FGO_USER=user
+      - FGO_PASS=pass
+    command: ["sh", "-lc", "fgofile --server --port ${FGO_PORT:-2121} --root ${FGO_ROOT:-/h5ai} $( [ -n \"$FGO_USER\" -a -n \"$FGO_PASS\" ] && printf -- ' --suser %s --spass %s' \"$FGO_USER\" \"$FGO_PASS\" )"]
     volumes:
       - ./data:/h5ai
     ports:

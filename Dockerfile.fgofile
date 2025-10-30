@@ -23,4 +23,4 @@ WORKDIR /h5ai
 EXPOSE 2121
 USER app
 
-ENTRYPOINT ["/bin/sh", "-c", "fgofile --server --port ${FGO_PORT:-2121} --root ${FGO_ROOT:-/h5ai} $( [ -n \"$FGO_USER\" -a -n \"$FGO_PASS\" ] && printf -- ' --suser %s --spass %s' \"$FGO_USER\" \"$FGO_PASS\" )"]
+ENTRYPOINT ["sh", "-c", "fgofile --server --port ${FGO_PORT:-2121} --root ${FGO_ROOT:-/h5ai} $( [ -n \"$FGO_USER\" -a -n \"$FGO_PASS\" ] && printf -- ' --suser %s --spass %s' \"$FGO_USER\" \"$FGO_PASS\" )"]
