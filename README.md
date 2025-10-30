@@ -19,6 +19,7 @@ sudo apt update
 sudo apt install fgofile -y
 ```
 
+## Get started quickly
 * **Run Server:**
 ```bash
 # Tạo thư mục gốc và file mẫu
