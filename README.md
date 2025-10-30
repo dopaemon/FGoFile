@@ -19,6 +19,17 @@ sudo apt update
 sudo apt install fgofile -y
 ```
 
+## Build
+* **Request GoLang 1.25**
+* Build binary:
+```bash
+go build -v
+```
+* Build debian package:
+```bash
+make build
+```
+
 ## Get started quickly
 * **Run Server:**
 ```bash
