@@ -77,6 +77,9 @@ docker compose up -d --build
 ```
 * File Storage Folder is `data`, edit in [**docker-compose.yml**](docker-compose.yml) file.
 * The `data` folder must have read and write permissions so that fgofile can write data.
+```bash
+chmod -R 777 ./data
+```
 
 # FTP Command table
 * [**FTP Command**](FTPCommand.md)
