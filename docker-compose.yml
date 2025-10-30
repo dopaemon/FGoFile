@@ -7,10 +7,9 @@ services:
     volumes:
       - ./data:/h5ai
     environment:
-      - TZ=Asia/Ho_Chi_Minh
+      TZ: Asia/Ho_Chi_Minh
     depends_on:
-      fgofile:
-        condition: service_started
+      - fgofile
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
@@ -20,20 +19,22 @@ services:
     restart: unless-stopped
 
   fgofile:
+    build:
+      context: .
+      dockerfile: Dockerfile.fgofile
     image: fgofile:latest
     container_name: h5ai-fgofile
     environment:
-      - FGO_PORT=2121
-      - FGO_ROOT=/h5ai
-      - FGO_USER=user
-      - FGO_PASS=pass
-    command: ["sh", "-lc", "fgofile --server --port ${FGO_PORT:-2121} --root ${FGO_ROOT:-/h5ai} $( [ -n \"$FGO_USER\" -a -n \"$FGO_PASS\" ] && printf -- ' --suser %s --spass %s' \"$FGO_USER\" \"$FGO_PASS\" )"]
+      FGO_PORT: 2121
+      FGO_ROOT: /h5ai
+      FGO_USER: user
+      FGO_PASS: pass
     volumes:
       - ./data:/h5ai
     ports:
-      - "2121:${FGO_PORT:-2121}"
+      - "2121:2121"
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost ${FGO_PORT:-2121}"]
+      test: ["CMD-SHELL", "nc -z localhost 2121"]
       interval: 30s
       timeout: 3s
       retries: 3

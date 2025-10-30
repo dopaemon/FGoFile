@@ -9,18 +9,16 @@ RUN go mod tidy && CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/fgo
 
 # ---------- Stage 2: Runtime ----------
 FROM alpine:3.20
-LABEL org.opencontainers.image.authors="polarisdp@gmail.com"
-
 RUN addgroup -S app && adduser -S app -G app
 COPY --from=builder /out/fgofile /usr/local/bin/fgofile
-
-ENV FGO_PORT=2121 \
-    FGO_ROOT=/h5ai \
-    FGO_USER="" \
-    FGO_PASS=""
-
-WORKDIR /h5ai
-EXPOSE 2121
 USER app
+WORKDIR /h5ai
 
-ENTRYPOINT ["sh", "-c", "fgofile --server --port ${FGO_PORT:-2121} --root ${FGO_ROOT:-/h5ai} $( [ -n \"$FGO_USER\" -a -n \"$FGO_PASS\" ] && printf -- ' --suser %s --spass %s' \"$FGO_USER\" \"$FGO_PASS\" )"]
+ENV FGO_PORT=2121
+ENV FGO_ROOT=/h5ai
+ENV FGO_USER="root"
+ENV FGO_PASS="toor"
+
+EXPOSE 2121
+
+ENTRYPOINT ["sh", "-c", "fgofile --server --port ${FGO_PORT} --root ${FGO_ROOT} --suser ${FGO_USER} --spass ${FGO_PASS}"]
