@@ -39,18 +39,23 @@ make build -j$(nproc --all) | tee log.txt
 ```bash
 mkdir -p ftp_root && echo Hello > ftp_root/readme.txt
 
+# With user / password (Administrator Mode)
+./fgofile --server --port 2121 --root ./ftp_root --suser user --spass pass
 ./fgofile --server --port 2121 --root ./ftp_root --suser user --spass pass
 
+# Or without user / password (Anon Mode)
 ./fgofile --server --port 2121 --root ./ftp_root
 ```
 
 * **Run Client:**
 ```bash
-./fgofile 127.0.0.1 --port 2121 --cuser user --cpass pass
+# With Administrator mode
+./fgofile --host 127.0.0.1 --port 2121 --cuser user --cpass pass
+# Username (Enter for anonymous): user
+# Password: pass
 
-./fgofile 127.0.0.1 --port 2121
-Username (Enter for anonymous): user
-Password: pass
+# Or with Anon mode
+./fgofile --host 127.0.0.1 --port 2121
 ```
 
 * **Support CommandLine:**
@@ -63,8 +68,10 @@ ftp> put example.txt
 ftp> get readme.txt
 ftp> quit
 ```
+* Read more using `help` command.
 
 # Docker Compose
+* Default user and password when you run `FGoFile` with Docker compose is `user` and `pass`
 * **Run Container With Docker Compose + h5ai Web Server:**
 ```bash
 docker compose up -d
