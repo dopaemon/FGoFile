@@ -72,13 +72,13 @@ ftp> quit
 
 # Docker Compose
 * Default user and password when you run `FGoFile` with Docker compose is `user` and `pass`
-* **Run Container With Docker Compose + h5ai Web Server:**
-```bash
-docker compose up -d
-```
 * **Build and Run Container With Docker Compose + h5ai Web Server:**
 ```bash
-docker compose up -d --build
+make up
+```
+* **Stop docker compose:**
+```bash
+make down
 ```
 * File Storage Folder is `data`, edit in [**docker-compose.yml**](docker-compose.yml) file.
 * The `data` folder must have read and write permissions so that fgofile can write data.
