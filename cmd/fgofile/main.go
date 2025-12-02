@@ -18,8 +18,9 @@ func main() {
 	srvUser := flag.String("suser", "", "server auth username (optional)")
 	srvPass := flag.String("spass", "", "server auth password (optional)")
 
-	cliUser := flag.String("cuser", "", "client username (or use -u)")
-	cliPass := flag.String("cpass", "", "client password (or use -P)")
+	host := flag.String("host", "", "FTP server host/address (client)")
+	cliUser := flag.String("cuser", "", "client username (or -u)")
+	cliPass := flag.String("cpass", "", "client password (or -P)")
 	flag.StringVar(cliUser, "u", *cliUser, "client username (alias)")
 	flag.StringVar(cliPass, "P", *cliPass, "client password (alias)")
 
@@ -42,29 +43,29 @@ func main() {
 		fmt.Printf("Server listening on %s\n", srv.Addr())
 		fmt.Printf("  Root : %s\n", rootAbs)
 		fmt.Printf("  Auth : %v (user=%q)\n", srv.RequireAuth(), *srvUser)
-
 		log.Fatal(srv.Serve())
 		return
 	}
 
-	if flag.NArg() < 1 {
+	if *host == "" {
+		fmt.Println("Missing --host")
+		fmt.Println()
 		fmt.Println("Usage:")
-		fmt.Println("  As server:")
+		fmt.Println("  Server Mode:")
 		fmt.Println("    fgofile --server [--port 2121] [--root ./ftp_root] [--suser u --spass p]")
 		fmt.Println()
-		fmt.Println("  As client:")
-		fmt.Println("    fgofile <host> [--port 2121] [--cuser u --cpass p | -u u -P p]")
+		fmt.Println("  Client Mode:")
+		fmt.Println("    fgofile --host <ip> [--port 2121] [--cuser user --cpass pass | -u user -P pass]")
 		fmt.Println()
-		fmt.Println("Client commands (inside REPL):")
+		fmt.Println("Commands inside REPL:")
 		fmt.Println("  ls, cd <dir>, pwd")
 		fmt.Println("  get <file>, put <file>, rm <file>, mkdir <dir>, mv <src> <dst>")
-		fmt.Println("  lpwd, lcd <dir>, lls (local directory & files)")
+		fmt.Println("  lpwd, lcd <dir>, lls (local commands)")
 		fmt.Println("  quit")
 		os.Exit(2)
 	}
 
-	host := flag.Arg(0)
-	addr := fmt.Sprintf("%s:%d", host, *port)
+	addr := fmt.Sprintf("%s:%d", *host, *port)
 
 	c, err := ftp.Dial(addr)
 	if err != nil {
