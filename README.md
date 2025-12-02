@@ -21,13 +21,17 @@ sudo apt install fgofile -y
 
 ## Build
 * **Request GoLang 1.25**
+* Clone Source:
+```bash
+git clone -b main --single-branch --recurse-submodules https://github.com/dopaemon/FGoFile.git
+```
 * Build binary:
 ```bash
 go build -v
 ```
 * Build debian package:
 ```bash
-make build
+make build -j$(nproc --all) | tee log.txt
 ```
 
 ## Get started quickly
@@ -65,11 +69,15 @@ ftp> quit
 ```bash
 docker compose up -d
 ```
-or
+* **Build and Run Container With Docker Compose + h5ai Web Server:**
 ```bash
 docker compose up -d --build
 ```
 * File Storage Folder is `data`, edit in [**docker-compose.yml**](docker-compose.yml) file.
+* The `data` folder must have read and write permissions so that fgofile can write data.
+```bash
+chmod -R 777 ./data
+```
 
 # FTP Command table
 * [**FTP Command**](FTPCommand.md)
