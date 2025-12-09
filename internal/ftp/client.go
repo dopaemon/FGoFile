@@ -18,6 +18,45 @@ type Client struct {
 	localCwd string
 }
 
+type progressReader struct {
+	r           io.Reader
+	total       int64
+	transferred int64
+	lastShown   int
+}
+
+func newProgressReader(r io.Reader, total int64) *progressReader {
+	return &progressReader{
+		r:         r,
+		total:     total,
+		lastShown: -1,
+	}
+}
+
+func (p *progressReader) Read(b []byte) (int, error) {
+	n, err := p.r.Read(b)
+	if n > 0 {
+		p.transferred += int64(n)
+		if p.total > 0 {
+			pct := int(p.transferred * 100 / p.total)
+			if pct != p.lastShown {
+				fmt.Printf("\rUploading... %d%%", pct)
+				p.lastShown = pct
+				if pct == 100 {
+					fmt.Print("\n")
+				}
+			}
+		} else {
+			mb := p.transferred / (1024 * 1024)
+			if int(mb) != p.lastShown {
+				fmt.Printf("\rUploading... %d MB", mb)
+				p.lastShown = int(mb)
+			}
+		}
+	}
+	return n, err
+}
+
 func Dial(addr string) (*Client, error) {
 	c, err := net.Dial("tcp", addr)
 	if err != nil {
@@ -235,7 +274,15 @@ func (c *Client) REPL() {
 				_ = readLine(c.rw)
 				continue
 			}
-			_, _ = io.Copy(dc, f)
+
+			var total int64 = -1
+			if fi, err := f.Stat(); err == nil {
+				total = fi.Size()
+			}
+
+			pr := newProgressReader(f, total)
+			_, _ = io.Copy(dc, pr)
+
 			_ = f.Close()
 			_ = dc.Close()
 			fmt.Print(strings.TrimSpace(readLine(c.rw)), "\n")
