@@ -71,7 +71,7 @@ ftp> quit
 * Read more using `help` command.
 * Upload with Direct Mode.
 ```bash
-fgofile --host 127.0.0.1 --port 2121 -u user -P pass put ./data/file.bin
+./fgofile --host 127.0.0.1 --port 2121 -u user -P pass put ./data/file.bin
 ```
 
 # Docker Compose
