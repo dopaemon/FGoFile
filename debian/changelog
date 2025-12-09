@@ -1,4 +1,4 @@
-fgofile (0.0.1ubuntu2) UNRELEASED; urgency=medium
+fgofile (0.0.1ubuntu3) UNRELEASED; urgency=medium
 
   [ dopaemon ]
   * Initial release.
@@ -10,4 +10,7 @@ fgofile (0.0.1ubuntu2) UNRELEASED; urgency=medium
   * Update vendor modules to latest
   * Improve more stable
 
- -- dopaemon <polarisdp@gmail.com>  Tue, 02 Dec 2025 15:45:17 +0700
+  [ dopaemon ]
+  * Add support direct command
+
+ -- dopaemon <polarisdp@gmail.com>  Tue, 09 Dec 2025 15:24:52 +0700
