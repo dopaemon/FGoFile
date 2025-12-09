@@ -62,6 +62,10 @@ func main() {
 		fmt.Println("  get <file>, put <file>, rm <file>, mkdir <dir>, mv <src> <dst>")
 		fmt.Println("  lpwd, lcd <dir>, lls (local commands)")
 		fmt.Println("  quit")
+		fmt.Println()
+		fmt.Println("One-shot commands (no REPL):")
+		fmt.Println("  fgofile --host <ip> [--port 2121] [auth flags] put <local> [remote]")
+		fmt.Println("  fgofile --host <ip> [--port 2121] [auth flags] get <remote> [local]")
 		os.Exit(2)
 	}
 
@@ -75,6 +79,44 @@ func main() {
 
 	if err := c.LoginInteractive(*cliUser, *cliPass); err != nil {
 		log.Fatal(err)
+	}
+
+	fmt.Printf("Connected to %s\n", addr)
+
+	args := flag.Args()
+	if len(args) > 0 {
+		switch args[0] {
+		case "put":
+			if len(args) < 2 {
+				fmt.Println("usage: fgofile --host <ip> [--port 2121] [--cuser user --cpass pass | -u user -P pass] put <local> [remote]")
+				os.Exit(2)
+			}
+			local := args[1]
+			remote := ""
+			if len(args) >= 3 {
+				remote = args[2]
+			}
+			if err := c.Put(local, remote); err != nil {
+				log.Fatal(err)
+			}
+			return
+
+		case "get":
+			if len(args) < 2 {
+				fmt.Println("usage: fgofile --host <ip> [...] get <remote> [local]")
+				os.Exit(2)
+			}
+			remote := args[1]
+			local := ""
+			if len(args) >= 3 {
+				local = args[2]
+			}
+			if err := c.Get(remote, local); err != nil {
+				log.Fatal(err)
+			}
+			return
+		default:
+		}
 	}
 
 	fmt.Printf("Connected to %s\n", addr)

@@ -69,6 +69,10 @@ ftp> get readme.txt
 ftp> quit
 ```
 * Read more using `help` command.
+* Upload with Direct Mode.
+```bash
+fgofile --host 127.0.0.1 --port 2121 -u user -P pass put ./data/file.bin
+```
 
 # Docker Compose
 * Default user and password when you run `FGoFile` with Docker compose is `user` and `pass`

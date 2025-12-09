@@ -220,72 +220,32 @@ func (c *Client) REPL() {
 
 		case "get":
 			if len(parts) < 2 {
-				fmt.Println("usage: get <remote>")
+				fmt.Println("usage: get <remote> [local]")
 				continue
 			}
 			remote := parts[1]
-
-			dc, _, err := c.pasvDial()
-			if err != nil {
-				fmt.Println(err)
-				continue
+			local := ""
+			if len(parts) >= 3 {
+				local = parts[2]
 			}
-			fmt.Print(strings.TrimSpace(c.send("RETR "+remote)), "\n")
-
-			localName := filepath.Base(remote)
-			localPath := filepath.Join(c.localCwd, localName)
-
-			f, err := os.Create(localPath)
-			if err != nil {
-				fmt.Println("create local file error:", err)
-				_ = dc.Close()
-				_ = readLine(c.rw)
-				continue
+			if err := c.Get(remote, local); err != nil {
+				fmt.Println("get error:", err)
 			}
-			_, _ = io.Copy(f, dc)
-			_ = f.Close()
-			_ = dc.Close()
-			fmt.Print(strings.TrimSpace(readLine(c.rw)), "\n")
+
 
 		case "put":
 			if len(parts) < 2 {
-				fmt.Println("usage: put <local>")
+				fmt.Println("usage: put <local> [remote]")
 				continue
 			}
-			arg := parts[1]
-
-			localPath := arg
-			if !filepath.IsAbs(localPath) {
-				localPath = filepath.Join(c.localCwd, arg)
+			local := parts[1]
+			remote := ""
+			if len(parts) >= 3 {
+				remote = parts[2]
 			}
-			localPath = filepath.Clean(localPath)
-
-			dc, _, err := c.pasvDial()
-			if err != nil {
-				fmt.Println(err)
-				continue
+			if err := c.Put(local, remote); err != nil {
+				fmt.Println("put error:", err)
 			}
-			fmt.Print(strings.TrimSpace(c.send("STOR "+filepath.Base(arg))), "\n")
-
-			f, err := os.Open(localPath)
-			if err != nil {
-				fmt.Println("open local file error:", err)
-				_ = dc.Close()
-				_ = readLine(c.rw)
-				continue
-			}
-
-			var total int64 = -1
-			if fi, err := f.Stat(); err == nil {
-				total = fi.Size()
-			}
-
-			pr := newProgressReader(f, total)
-			_, _ = io.Copy(dc, pr)
-
-			_ = f.Close()
-			_ = dc.Close()
-			fmt.Print(strings.TrimSpace(readLine(c.rw)), "\n")
 
 		case "lpwd":
 			fmt.Println("Local:", c.localCwd)
@@ -328,4 +288,81 @@ func (c *Client) REPL() {
 func readLine(rw *bufio.ReadWriter) string {
 	s, _ := rw.ReadString('\n')
 	return s
+}
+
+func (c *Client) Put(localPath, remoteName string) error {
+	if remoteName == "" {
+		remoteName = filepath.Base(localPath)
+	}
+
+	if !filepath.IsAbs(localPath) {
+		localPath = filepath.Join(c.localCwd, localPath)
+	}
+	localPath = filepath.Clean(localPath)
+
+	f, err := os.Open(localPath)
+	if err != nil {
+		return fmt.Errorf("open local file error: %w", err)
+	}
+	defer f.Close()
+
+	dc, _, err := c.pasvDial()
+	if err != nil {
+		return fmt.Errorf("pasv dial error: %w", err)
+	}
+
+	fmt.Print(strings.TrimSpace(c.send("STOR "+remoteName)), "\n")
+
+	var total int64 = -1
+	if fi, err := f.Stat(); err == nil {
+		total = fi.Size()
+	}
+
+	pr := newProgressReader(f, total)
+	if _, err := io.Copy(dc, pr); err != nil {
+		_ = dc.Close()
+		return fmt.Errorf("upload error: %w", err)
+	}
+	_ = dc.Close()
+
+	fmt.Print(strings.TrimSpace(readLine(c.rw)), "\n")
+	return nil
+}
+
+func (c *Client) Get(remoteName, localPath string) error {
+	if remoteName == "" {
+		return fmt.Errorf("remote filename required")
+	}
+
+	dc, _, err := c.pasvDial()
+	if err != nil {
+		return fmt.Errorf("pasv dial error: %w", err)
+	}
+	fmt.Print(strings.TrimSpace(c.send("RETR "+remoteName)), "\n")
+
+	if localPath == "" {
+		localPath = filepath.Join(c.localCwd, filepath.Base(remoteName))
+	}
+	if !filepath.IsAbs(localPath) {
+		localPath = filepath.Join(c.localCwd, localPath)
+	}
+	localPath = filepath.Clean(localPath)
+
+	f, err := os.Create(localPath)
+	if err != nil {
+		_ = dc.Close()
+		_ = readLine(c.rw)
+		return fmt.Errorf("create local file error: %w", err)
+	}
+
+	_, copyErr := io.Copy(f, dc)
+	_ = f.Close()
+	_ = dc.Close()
+
+	fmt.Print(strings.TrimSpace(readLine(c.rw)), "\n")
+
+	if copyErr != nil {
+		return fmt.Errorf("download error: %w", copyErr)
+	}
+	return nil
 }
