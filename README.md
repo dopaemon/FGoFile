@@ -27,7 +27,7 @@ git clone -b main --single-branch --recurse-submodules https://github.com/dopaem
 ```
 * Build binary:
 ```bash
-make build-binary
+make build-binary -j$(nproc --all) | tee log.txt
 ```
 * Build debian package:
 ```bash
