@@ -2,6 +2,8 @@ package ftp
 
 import (
 	"bufio"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"net"
@@ -244,12 +246,23 @@ func (s *Server) handle(c net.Conn) {
 				break
 			}
 
-			_, _ = io.Copy(f, dc)
+			hasher := sha256.New()
+			_, copyErr := io.Copy(io.MultiWriter(f, hasher), dc)
+
 			_ = f.Close()
 			_ = dc.Close()
 			ss.pasv.Close()
 			ss.pasv = nil
-			ss.write("226 Done")
+
+			if copyErr != nil {
+				ss.write("550 STOR failed (write error)")
+				break
+			}
+
+			sum := hasher.Sum(nil)
+			hexSum := hex.EncodeToString(sum)
+
+			ss.write("226 Done SHA256=" + hexSum)
 
 		case "DELE":
 			if arg == "" {
